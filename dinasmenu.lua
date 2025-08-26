@@ -1,4 +1,4 @@
- --Instances:
+-- Instances:
 local SummitUI
 local SideBar
 local UIPadding
@@ -46,6 +46,505 @@ function summitLib:CreateWindow(ConfigArgs)
 			})
 		end
 		return playerIcons
+	end
+	local function addConnection(event, func)
+		local signal = event:Connect(func)
+		table.insert(summitLib.Connections, signal)
+		return signal
+	end
+
+	local function assignClickAnimation(Button,clipsDescendants)
+		local player = game:GetService("Players").LocalPlayer
+		local mouse = player:GetMouse()
+		if clipsDescendants == nil then
+			clipsDescendants = true
+		end
+		addConnection(Button.MouseButton1Click, function()
+			local sound = Instance.new("Sound")
+			sound.Parent = game
+			sound.Volume = 0.25
+			sound.SoundId = 'rbxassetid://6895079853'
+			sound:Play()
+			local x, y = mouse.X, mouse.Y
+
+			Button.ClipsDescendants = true
+			if clipsDescendants == false then
+				Button.ClipsDescendants = false
+			end
+			local frame = Instance.new("Frame")
+			local UiCorner = Instance.new("UICorner")
+
+			frame.AnchorPoint = Vector2.new(0.5, 0.5)
+			frame.Position = UDim2.new(0, x - Button.AbsolutePosition.X, 0, y - Button.AbsolutePosition.Y)
+			frame.Size = UDim2.new(0, 1, 0, 1)
+			frame.Parent = Button
+			frame.Transparency = .2
+			frame.BackgroundColor3 = Color3.new(0.886, 0.886, 0.886)
+			frame.ZIndex = 0 
+
+			UiCorner.Parent = frame
+			UiCorner.CornerRadius = UDim.new(1, 0)
+
+			local tween = game:GetService("TweenService"):Create(frame, TweenInfo.new(1.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {
+				Size = UDim2.new(0, 200, 0, 200),
+				BackgroundTransparency = 1
+			})
+			tween:Play()
+			tween.Completed:Connect(function()
+				frame:Destroy()
+			end)
+			sound:Destroy()
+		end)
+	end
+
+	local function loadTabContents(tabName)
+		for _, v in pairs(TabContentsFrame:GetChildren()) do
+			if v.ClassName == 'TextLabel' or v.ClassName == 'Frame' then
+				if string.find(v.Name,tabName) then
+					v.Visible = true
+				else
+					v.Visible = false
+				end			
+			end
+		end
+	end
+
+	local function Color3ToRGB(color)
+		return Color3.new(math.floor(color.R * 255),math.floor(color.G * 255),math.floor(color.B * 255))
+	end
+
+	local function DPRound(decimal,points)
+		local pow = math.pow(10,points)
+		local newDP = decimal * pow
+		newDP = math.floor(newDP)
+		return newDP / pow
+	end
+
+	local function setHueAndSaturation(color3,Sat,Value)
+		local hue, sat, val = color3:ToHSV()
+		return Color3.fromHSV(hue,Sat,Value)
+	end
+
+	ConfigArgs = ConfigArgs or {}
+	ConfigArgs.Name = ConfigArgs.Name or "Unnamed Summit UI Menu"
+	ConfigArgs.Icon = ConfigArgs.Icon or "rbxassetid://18820555586"
+	ConfigArgs.AccentColor3 = ConfigArgs.AccentColor3 or Color3.new(0.556863, 0.564706, 1)
+
+	SummitUI = Instance.new("ScreenGui")
+	SideBar = Instance.new("Frame")
+	UIPadding = Instance.new("UIPadding")
+	settingsBTN = Instance.new("ImageButton")
+	TabsScrollingFrame = Instance.new("ScrollingFrame")
+	UIListLayout = Instance.new("UIListLayout")
+	MenuFrame = Instance.new("Frame")
+	TabTitle = Instance.new("TextLabel")
+	UIGradient = Instance.new("UIGradient")
+	TabContentsFrame = Instance.new("ScrollingFrame")
+	UIListLayout_2 = Instance.new("UIListLayout")
+	UIPadding_2 = Instance.new("UIPadding")
+	UIPadding_3 = Instance.new("UIPadding")
+	TopBar = Instance.new("Frame")
+	GUITitle = Instance.new("TextLabel")
+	UIGradient_2 = Instance.new("UIGradient")
+	ImageLabel = Instance.new("ImageLabel")
+	UIGradient_3 = Instance.new("UIGradient")
+	local SettingsPanel = Instance.new("Frame")
+
+	--Properties:
+
+	SummitUI.Name = "SummitUI"
+	SummitUI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+	SummitUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	SummitUI.ResetOnSpawn = false
+
+	SideBar.Name = "SideBar"
+	SideBar.Parent = TopBar
+	SideBar.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+	SideBar.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	SideBar.BorderSizePixel = 0
+	SideBar.Position = UDim2.new(0, 0,0.984, 0)
+	SideBar.Size = UDim2.new(0, 237, 0, 310)
+
+	UIPadding.Parent = SideBar
+	UIPadding.PaddingLeft = UDim.new(0, 10)
+
+	SettingsPanel.Name = "SettingsPanel"
+	SettingsPanel.Parent = SideBar
+	SettingsPanel.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+	SettingsPanel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	SettingsPanel.BorderSizePixel = 0
+	SettingsPanel.Position = UDim2.new(0, 0, 0.870967746, 0)
+	SettingsPanel.Size = UDim2.new(1, 0, 0, 40)
+	SettingsPanel.ZIndex = 5
+
+	settingsBTN.Name = "settingsBTN"
+	settingsBTN.Parent = SettingsPanel
+	settingsBTN.BackgroundTransparency = 1.000
+	settingsBTN.LayoutOrder = 1
+	settingsBTN.Position = UDim2.new(0.0421940945, 0, 0, 7)
+	settingsBTN.Size = UDim2.new(0, 25, 0, 25)
+	settingsBTN.ZIndex = 2
+	settingsBTN.Image = "rbxassetid://3926307971"
+	settingsBTN.ImageRectOffset = Vector2.new(324, 124)
+	settingsBTN.ImageRectSize = Vector2.new(36, 36)
+
+	local TextLabel77 = Instance.new("TextLabel")
+	TextLabel77.Parent = SettingsPanel
+	TextLabel77.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel77.BackgroundTransparency = 1.000
+	TextLabel77.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabel77.BorderSizePixel = 0
+	TextLabel77.Position = UDim2.new(0.177215189, 0, 0, 7)
+	TextLabel77.Size = UDim2.new(0, 185, 0, 25)
+	TextLabel77.FontFace = defaultFont
+	TextLabel77.Text = "Settings"
+	TextLabel77.TextColor3 = Color3.fromRGB(253, 253, 253)
+	TextLabel77.TextSize = 30.000
+	TextLabel77.TextXAlignment = Enum.TextXAlignment.Left
+
+	TabsScrollingFrame.Name = "TabsScrollingFrame"
+	TabsScrollingFrame.Parent = SideBar
+	TabsScrollingFrame.Active = true
+	TabsScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TabsScrollingFrame.BackgroundTransparency = 1.000
+	TabsScrollingFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TabsScrollingFrame.BorderSizePixel = 0
+	TabsScrollingFrame.Size = UDim2.new(0, 243, 0, 262)
+	TabsScrollingFrame.ScrollBarImageTransparency = 1
+
+	UIListLayout.Parent = TabsScrollingFrame
+	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout.Padding = UDim.new(0, 5)
+
+	UIPadding_3.Parent = TabsScrollingFrame
+	UIPadding_3.PaddingTop = UDim.new(0, 5)
+	UIPadding_3.PaddingLeft = UDim.new(0,7)
+
+	MenuFrame.Name = "MenuFrame"
+	MenuFrame.Parent = TopBar
+	MenuFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+	MenuFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	MenuFrame.BorderSizePixel = 0
+	MenuFrame.Position = UDim2.new(0.345, 0,0.984, 0)
+	MenuFrame.Size = UDim2.new(0, 450, 0, 310)
+
+	TabTitle.Name = "TabTitle"
+	TabTitle.Parent = MenuFrame
+	TabTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TabTitle.BackgroundTransparency = 1.000
+	TabTitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TabTitle.BorderSizePixel = 0
+	TabTitle.Position = UDim2.new(0.0111111114, 0, 0.00055286038, 0)
+	TabTitle.Size = UDim2.new(0, 444, 0, 31)
+	TabTitle.Font = Enum.Font.SourceSansBold
+	TabTitle.Text = "Select A Tab"
+	TabTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TabTitle.TextSize = 22.000
+	TabTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, ConfigArgs.AccentColor3), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(225, 226, 227))}
+	UIGradient.Rotation = -180
+	UIGradient.Parent = TabTitle
+
+	TabContentsFrame.Name = "TabContentsFrame"
+	TabContentsFrame.Parent = MenuFrame
+	TabContentsFrame.Active = true
+	TabContentsFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TabContentsFrame.BackgroundTransparency = 1
+	TabContentsFrame.ScrollBarThickness = 4
+	TabContentsFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TabContentsFrame.BorderSizePixel = 0
+	TabContentsFrame.Position = UDim2.new(0, 0, 0.100000001, 0)
+	TabContentsFrame.Size = UDim2.new(0, 448, 0, 279)
+
+	UIListLayout_2.Parent = TabContentsFrame
+	UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
+	UIListLayout_2.Padding = UDim.new(0, 4)
+
+	UIPadding_2.Parent = TabContentsFrame
+	UIPadding_2.PaddingLeft = UDim.new(0, 5)
+
+	TopBar.Name = "TopBar"
+	TopBar.Parent = SummitUI
+	TopBar.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+	TopBar.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TopBar.BorderSizePixel = 0
+	TopBar.Position = UDim2.new(0.311196476, 0, 0.351635993, 0)
+	TopBar.Size = UDim2.new(0, 687, 0, 40)
+
+	GUITitle.Name = "GUITitle"
+	GUITitle.Parent = TopBar
+	GUITitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	GUITitle.BackgroundTransparency = 1.000
+	GUITitle.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	GUITitle.BorderSizePixel = 0
+	GUITitle.Position = UDim2.new(0,45, 7.62939464e-07, 0)
+	GUITitle.Size = UDim2.new(0, 463, 0, 39)
+	GUITitle.Font = Enum.Font.SourceSansBold
+	GUITitle.Text = ConfigArgs.Name
+	GUITitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+	GUITitle.TextSize = 24.000
+	GUITitle.TextXAlignment = Enum.TextXAlignment.Left
+
+	UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, ConfigArgs.AccentColor3), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(225, 226, 227))}
+	UIGradient_2.Rotation = -180
+	UIGradient_2.Parent = GUITitle
+
+	ImageLabel.Parent = TopBar
+	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ImageLabel.BackgroundTransparency = 1.000
+	ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ImageLabel.BorderSizePixel = 0
+	ImageLabel.Position = UDim2.new(0.0029112082, 0, 0, 0)
+	ImageLabel.Size = UDim2.new(0, 40, 0, 40)
+	ImageLabel.Image = ConfigArgs.Icon
+
+	UIGradient_3.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, ConfigArgs.AccentColor3), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(225, 226, 227))}
+	UIGradient_3.Rotation = -180
+	UIGradient_3.Parent = ImageLabel
+
+	local NotificationTable = Instance.new("Frame")
+	NotificationTable.Name = "NotificationTable"
+	NotificationTable.Parent = SummitUI
+	NotificationTable.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	NotificationTable.BackgroundTransparency = 1
+	NotificationTable.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	NotificationTable.BorderSizePixel = 0
+	NotificationTable.Position = UDim2.new(0.846871555, 0, 0.01813, 0)
+	NotificationTable.Size = UDim2.new(0.143249184, 0, 0.96545, 0)
+
+	local close = Instance.new("ImageButton")
+	local remove = Instance.new("ImageButton")
+	local uiCorner44432 = Instance.new("UICorner")
+	local minimized = false
+	local closed = false
+	local closedPos = UDim2.new(0.311, 0,0.352, 0)
+
+	uiCorner44432.Parent = TopBar
+	uiCorner44432.CornerRadius = UDim.new(0,0)
+
+	close.Name = "close"
+	close.Parent = TopBar
+	close.BackgroundTransparency = 1.000
+	close.LayoutOrder = 5
+	close.Position = UDim2.new(1, -30,0.175, 0)
+	close.Size = UDim2.new(0, 25, 0, 25)
+	close.ZIndex = 2
+	close.Image = "rbxassetid://3926305904"
+	close.ImageRectOffset = Vector2.new(284, 4)
+	close.ImageRectSize = Vector2.new(24, 24)
+
+	remove.Name = "remove"
+	remove.Parent = close
+	remove.BackgroundTransparency = 1.000
+	remove.LayoutOrder = 6
+	remove.Position = UDim2.new(-1,0,0,0)
+	remove.Size = UDim2.new(0, 25, 0, 25)
+	remove.ZIndex = 2
+	remove.Image = "rbxassetid://3926307971"
+	remove.ImageRectOffset = Vector2.new(884, 284)
+	remove.ImageRectSize = Vector2.new(36, 36)
+
+	local TemporaryText = Instance.new("TextLabel")
+
+	--Properties:
+
+	TemporaryText.Name = "TabTitle"
+	TemporaryText.Parent = TabContentsFrame
+	TemporaryText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TemporaryText.BackgroundTransparency = 1.000
+	TemporaryText.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TemporaryText.BorderSizePixel = 0
+	TemporaryText.Position = UDim2.new(0.0111111114, 0, 0.00055286038, 0)
+	TemporaryText.Size = UDim2.new(0, 444, 0, 31)
+	TemporaryText.Font = Enum.Font.SourceSansBold
+	TemporaryText.Text = `<b>{ConfigArgs.Name}</b> x <b>Summit UI Library v1.4 </b>`
+	TemporaryText.TextColor3 = Color3.fromRGB(150, 150, 150)
+	TemporaryText.TextSize = 15
+	TemporaryText.RichText = true
+	TemporaryText.TextXAlignment = Enum.TextXAlignment.Left
+	TemporaryText.TextYAlignment = Enum.TextYAlignment.Top
+
+	local ScrollingFrame555 = Instance.new("ScrollingFrame")
+	ScrollingFrame555.Parent = SettingsPanel
+	ScrollingFrame555.Active = true
+	ScrollingFrame555.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ScrollingFrame555.BackgroundTransparency = 1.000
+	ScrollingFrame555.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ScrollingFrame555.BorderSizePixel = 0
+	ScrollingFrame555.ScrollBarThickness = 4
+	ScrollingFrame555.Position = UDim2.new(0.0527426153, 0, 0.119354837, 0)
+	ScrollingFrame555.Size = UDim2.new(0, 214, 0, 265)
+
+	local UILIST5 = Instance.new("UIListLayout")
+	UILIST5.Parent = ScrollingFrame555
+	UILIST5.Padding = UDim.new(0,5)
+
+	UIPadding.Parent = ScrollingFrame555
+	UIPadding.PaddingRight = UDim.new(0, 10)
+
+	local dragging = false
+	local dragInput = nil
+	local dragStart = nil
+	local startPosition = nil
+
+	local function update(input)
+		local delta = input.Position - dragStart
+		TopBar.Position = UDim2.new(startPosition.X.Scale, startPosition.X.Offset + delta.X, startPosition.Y.Scale, startPosition.Y.Offset + delta.Y)
+	end
+
+	TopBar.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPosition = TopBar.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	TopBar.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	game:GetService("UserInputService").InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
+		end
+	end) 
+
+	-- Add the CreateTab method to the window object
+	local window = {}
+
+	function window:CreateNotification(args)
+		args.Duration = args.Duration or 3
+		args.Title = args.Title or "Notification"
+		args.Description = args.Description or "UI created lovingly by Github.com/Dialga156b. You forgot to put a description."
+
+		local Notification = Instance.new("Frame")
+		local UICorner = Instance.new("UICorner")
+		local UIStroke = Instance.new("UIStroke")
+		local Title = Instance.new("TextLabel")
+		local BodyText = Instance.new("TextLabel")
+		local Frame = Instance.new("Frame")
+		local notifications = Instance.new("ImageButton")
+		local UIListLayout = Instance.new("UIListLayout")
+
+		UIStroke.Parent = Notification
+		UIStroke.Thickness = 1.8
+		UIStroke.Color = Color3.new(.8,.8,.8)
+
+		Notification.Name = "Notification"
+		Notification.Parent = NotificationTable
+		Notification.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+		Notification.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Notification.BorderSizePixel = 0
+		Notification.BackgroundTransparency = 0.15
+		Notification.ClipsDescendants = true
+		Notification.Position = UDim2.new(0.934865892, 0, 0.991055429, 0)
+		Notification.Size = UDim2.new(0.87356323, 0, 0, 0)
+
+		UICorner.Parent = Notification
+
+		Title.Name = "Title"
+		Title.Parent = Notification
+		Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Title.BackgroundTransparency = 1.000
+		Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Title.BorderSizePixel = 0
+		Title.Position = UDim2.new(0.149122804, 0, 0.0588235296, 0)
+		Title.Size = UDim2.new(0.820175409, 0, 0, 25)
+		Title.FontFace = Font.new('rbxasset://fonts/families/TitilliumWeb.json', Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+		Title.Text = args.Title
+		Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+		Title.TextSize = 25.000
+		Title.TextXAlignment = Enum.TextXAlignment.Left
+
+		BodyText.Name = "BodyText"
+		BodyText.Parent = Notification
+		BodyText.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		BodyText.BackgroundTransparency = 1.000
+		BodyText.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		BodyText.BorderSizePixel = 0
+		BodyText.Position = UDim2.new(0.026, 0, 0.33, 0)
+		BodyText.Size = UDim2.new(0.94, 0, 0.53, 0)
+		BodyText.FontFace = Font.new('rbxasset://fonts/families/TitilliumWeb.json', Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+		BodyText.Text = args.Description
+		BodyText.TextColor3 = Color3.fromRGB(191, 191, 191)
+		BodyText.TextSize = 18.000
+		BodyText.TextWrapped = true
+		BodyText.TextXAlignment = Enum.TextXAlignment.Left
+		BodyText.TextYAlignment = Enum.TextYAlignment.Top
+
+		Frame.Parent = Notification
+		Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Frame.BorderSizePixel = 0
+		Frame.Position = UDim2.new(0.026, 0, 0.92, 0)
+		Frame.Size = UDim2.new(0.94, 0, 0.03, 0)
+
+		notifications.Name = "notifications"
+		notifications.Parent = Notification
+		notifications.BackgroundTransparency = 1.000
+		notifications.LayoutOrder = 1
+		notifications.Position = UDim2.new(0.02, 0, 0.08, 0)
+		notifications.Size = UDim2.new(0.11, 0, 0.245, 0)
+		notifications.ZIndex = 2
+		notifications.Image = "rbxassetid://3926305904"
+		notifications.ImageRectOffset = Vector2.new(844, 564)
+		notifications.ImageRectSize = Vector2.new(36, 36)
+
+		UIListLayout.Parent = NotificationTable
+		UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+		UIListLayout.Padding = UDim.new(0, 15)
+
+		coroutine.wrap(function()
+			local showTween = game:GetService("TweenService"):Create(Notification, TweenInfo.new(.7, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Size = UDim2.new(0.87356323, 0, 0.0912343487, 0)})
+			showTween:Play()
+
+			local thingy = game:GetService("TweenService"):Create(Frame, TweenInfo.new(args.Duration, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0.03, 0)})
+			thingy:Play()
+			wait(args.Duration)
+
+			local hideTween = game:GetService("TweenService"):Create(Notification, TweenInfo.new(.7, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Size = UDim2.new(0.87356323, 0, 0, 0)})
+			local hideStrokeTween = game:GetService("TweenService"):Create(UIStroke, TweenInfo.new(.7, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Thickness = 0})
+			hideTween:Play()
+			hideStrokeTween:Play()
+			hideTween.Completed:Wait()
+			Notification:Destroy()
+		end)()
+	end
+	
+	SideBar.ClipsDescendants = true
+	MenuFrame.ClipsDescendants = true
+	
+	addConnection(remove.MouseButton1Click,function() 
+		if minimizeAnim then
+			game:GetService("TweenService"):Create(SideBar,TweenInfo.new(.6,Enum.EasingStyle.Cubic,Enum.EasingDirection.In),{Size = UDim2.new(0, 237, 0, 0)}):Play()
+			wait(.3)
+			coroutine.wrap(function()
+				GUITitle.Text = ConfigArgs.Name
+				for i = #GUITitle.Text, 0, -1 do
+					GUITitle.Text = string.sub(GUITitle.Text,0,i)
+					task.wait()
+				end
+				GUITitle.Text = "U"
+				task.wait()
+				GUITitle.Text = "UI"
+			end)()
+			game:GetService("TweenService"):Create(MenuFrame,TweenInfo.new(.6,Enum.EasingStyle.Cubic,Enum.EasingDirection.In),{Size = UDim2.new(0, 450, 0, 0)}):Play()
+			wait(.4)
+			game:GetService("TweenService"):Create(TopBar,TweenInfo.new(1,Enum.EasingStyle.Cubic,Enum.EasingDirection.InOut),{Size = UDim2.new(0, 140, 0, 40)}):Play()
+			game:GetService("TweenService"):Create(close,TweenInfo.new(.6,Enum.EasingStyle.Cubic,Enum.EasingDirection.InOut),{Rotation = -45}):Play()
+			game:GetService("TweenService"):Create(remove,Tween		return playerIcons
 	end
 	local function addConnection(event, func)
 		local signal = event:Connect(func)
