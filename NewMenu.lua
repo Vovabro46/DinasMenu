@@ -1729,7 +1729,7 @@ function Library:AddPlayerSelector(tab, name, callback)
     playerSelectorButton.Position = UDim2.new(0.7, 0, 0, 0)
     playerSelectorButton.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
     playerSelectorButton.BorderSizePixel = 0
-    playerSelectorButton.Text = "Выбрать..."
+    playerSelectorButton.Text = "Choose..."
     playerSelectorButton.TextColor3 = colors.text
     playerSelectorButton.TextSize = 13
     playerSelectorButton.Font = FONT_REGULAR
@@ -1964,7 +1964,7 @@ function Library:AddPlayerSelector(tab, name, callback)
             playerRemovingConnection = game.Players.PlayerRemoving:Connect(function(player)
                 if selectedPlayer == player then
                     selectedPlayer = nil
-                    playerSelectorButton.Text = "Выбрать..."
+                    playerSelectorButton.Text = "Choose..."
                 end
                 wait(0.1)
                 createPlayerButtons()
