@@ -21,8 +21,8 @@ local colors = {
     error = Color3.fromRGB(220, 80, 80)
 }
 
-local FONT_REGULAR = Enum.Font.Gotham
-local FONT_ICONS = Enum.Font.Gotham
+local FONT_REGULAR = Enum.Font.ArimoBold
+local FONT_ICONS = Enum.Font.ArimoBold
 
 local function createTween(object, properties, duration, easingStyle, easingDirection)
     local tweenInfo = TweenInfo.new(
